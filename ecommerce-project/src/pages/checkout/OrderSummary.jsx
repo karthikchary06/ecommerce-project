@@ -1,39 +1,36 @@
-import React from 'react';
+import React from 'react'
 import dayjs from 'dayjs';
 import { formatMoney } from '../../utils/money';
 import DeliveryOptions from './DeliveryOptions';
 import axios from 'axios';
-
 function OrderSummary({ cart, deliveryOptions, loadCart }) {
-    console.log('cart:', cart);  // Add this to inspect cart data
-    console.log('deliveryOptions:', deliveryOptions);
-
     return (
         <div>
             <div className="order-summary">
+
                 {deliveryOptions.length > 0 && cart.map((cartItem) => {
                     const selectedDeliveryOption = deliveryOptions.find((deliveryOption) => {
                         return deliveryOption.id === cartItem.deliveryOptionId;
                     });
-
                     const deleteCartItem = async () => {
-                        console.log('Deleting cart item with productId:', cartItem.productId);
-                        try {
-                            await axios.delete(`/api/cart-items/${cartItem.productId}`);
+
+                        {
+                            await axios.delete(`/api/cart-item/${cartItem.productId}`);
                             await loadCart();
-                        } catch (error) {
-                            console.error('Error deleting cart item:', error.response ? error.response.data : error.message);
                         }
-                    };
+                    }
+
 
                     return (
                         <div key={cartItem.productId} className="cart-item-container">
                             <div className="delivery-date">
-                                Delivery date: {selectedDeliveryOption ? dayjs(selectedDeliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM D') : 'Not selected'}
+                                Delivery date:{dayjs(selectedDeliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM D')}
+
                             </div>
 
                             <div className="cart-item-details-grid">
-                                <img className="product-image" src={cartItem.product.image} />
+                                <img className="product-image"
+                                    src={cartItem.product.image} />
 
                                 <div className="cart-item-details">
                                     <div className="product-name">
@@ -44,7 +41,7 @@ function OrderSummary({ cart, deliveryOptions, loadCart }) {
                                     </div>
                                     <div className="product-quantity">
                                         <span>
-                                            Quantity: <span className="quantity-label">{cartItem.quantity}</span>  {/* Fixed here */}
+                                            Quantity: <span className="quantity-label">{cartItem.product.quantity}</span>
                                         </span>
                                         <span className="update-quantity-link link-primary">
                                             Update
@@ -58,11 +55,12 @@ function OrderSummary({ cart, deliveryOptions, loadCart }) {
                                 <DeliveryOptions deliveryOptions={deliveryOptions} cartItem={cartItem} loadCart={loadCart} />
                             </div>
                         </div>
-                    );
+                    )
                 })}
+
             </div>
         </div>
-    );
+    )
 }
 
-export default OrderSummary;
+export default OrderSummary
